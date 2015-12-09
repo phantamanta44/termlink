@@ -1,0 +1,8 @@
+@font-face {
+    font-family: fixedsys;
+    src: url('../ttf/fixedsys.ttf') format('truetype');
+}
+
+body {
+    font-family: fixedsys;
+}
