@@ -39,14 +39,8 @@ $(document).ready(function() {
     };
     
     clear();
-    text('ROBCO INDUSTRIES (TM) UNIFIED OPERATING SYSTEM');
-    $.getScript('init.js').promise()
-        .done(function() {
-            text('\n\n');
-        })
-        .fail(function() {
-            text('\n\nCould not find a suitable init script!\n\
-                Please insert an appropriate holotape and restart your machine.');
-        });
+    text('ROBCO INDUSTRIES (TM) UNIFIED OPERATING SYSTEM\n\n');
+    var i = $.getScript('init.js');
+    console.log(i);
     
 });
