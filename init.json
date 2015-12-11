@@ -1,0 +1,6 @@
+{
+    "name": "RobCo Unified Operating System",
+    "data": {
+        "init": "echo Hello, world!;"
+    }
+}
