@@ -1,6 +1,6 @@
 {
-    "name": "RobCo Unified Operating System",
+    "name": "RobCo (TM) Termlink Test Disk",
     "data": {
-        "init": "echo Hello, world!;"
+        "init": "echo Hello, world!; echo This is an echo directive.; echo It prints a line of text, then a newline.;"
     }
 }

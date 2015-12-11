@@ -17,14 +17,14 @@ $(document).ready(function() {
         }
         textQueueLocked = true;
         if (currentString.length <= 0) {
-            currentString = textQueue.shift(-1).split('');
+            currentString = textQueue.shift().split('');
             for (var i = 0; i < currentString.length; i++) {
                 if (currentString[i] === '\ue001')
                     currentString[i] = '<br>';
             }
         }
         else {
-            bg.html(bg.html() + currentString.shift(-1));
+            bg.html(bg.html() + currentString.shift());
             square();
         }
         setTimeout(updateText, 48);
@@ -41,17 +41,31 @@ $(document).ready(function() {
         updateText();
     };
     
-    var parseCommand = function(s, args) {
-        text('cmd\t' + s + '\nargs\t' + args.toString());
+    var prevStatus = 0;
+    
+    var parseCommand = function(cmd, args, fileName, lineNum) {
+        var ln = lineNum || '?';
+        var file = fileName || 'Unknown';
+        switch (cmd.toLowerCase()) {
+            case 'echo':
+                $.each(args, function(i, obj) {
+                    text(obj);
+                    text(i + 1 < args.length ? ' ' : '\n');
+                });
+                return 0;
+            default:
+                text('Unknown directive \'' + cmd + '\'\nAt directive ' + ln + ' of ' + file);
+                return 127;
+        }
     };
     
-    var parseScript = function(s) {
+    var parseScript = function(s, fileName) {
         var cmds = [];
         var qStr = '', quotes = false;
         for (var i = 0; i < s.length; i++) {
             if (s[i] === ';' && !quotes) {
-                var sep = qStr.split(/\s/g);
-                cmds.push({name: sep.shift(-1), args: sep});
+                var sep = $.trim(qStr).split(/\s/g);
+                cmds.push({name: sep.shift(), args: sep});
                 qStr = '';
             }
             else if (s[i] === '\'' || s[i] === '\"')
@@ -59,8 +73,11 @@ $(document).ready(function() {
             else
                 qStr += s[i];
         }
-        for (var j = 0; j < cmds.length; j++)
-            parseCommand(cmds[j].name, cmds[j].args);
+        for (var j = 0; j < cmds.length; j++) {
+            prevStatus = parseCommand(cmds[j].name, cmds[j].args, fileName, j + 1);
+            if (prevStatus === 127)
+                return;
+        }
     };
     
     var loadInitJs = function(diskData) {
@@ -78,7 +95,7 @@ $(document).ready(function() {
         }
         setTimeout(function() {
             clear();
-            parseScript(initScr)
+            parseScript(initScr, '<init>')
         }, 3000);
     };
     
