@@ -50,8 +50,10 @@ $(document).ready(function() {
             case 'echo':
                 $.each(args, function(i, obj) {
                     text(obj);
-                    text(i + 1 < args.length ? ' ' : '\n');
+                    if (i + 1 < args.length)
+                        text(' ');
                 });
+                text('\n');
                 return 0;
             default:
                 text('Unknown directive \'' + cmd + '\'\nAt directive ' + ln + ' of ' + file);
@@ -63,12 +65,12 @@ $(document).ready(function() {
         var cmds = [];
         var qStr = '', quotes = false;
         for (var i = 0; i < s.length; i++) {
-            if (s[i] === ';' && !quotes) {
-                var sep = $.trim(qStr).split(/\s/g);
+            if (s[i] === ';' && s[i - 1] !== '\\' && !quotes) {
+                var sep = $.trim(qStr).replace(/\\("|')/g, '$0').split(/\s/g);
                 cmds.push({name: sep.shift(), args: sep});
                 qStr = '';
             }
-            else if (s[i] === '\'' || s[i] === '\"')
+            else if ((s[i] === '\'' || s[i] === '\"') && s[i - 1] !== '\\')
                 quotes = !quotes;
             else
                 qStr += s[i];
@@ -88,7 +90,7 @@ $(document).ready(function() {
         }
         text('\n\nLoading mounted holotape:\n');
         text(diskData.name);
-        var initScr = diskData.data.init;
+        var initScr = diskData.data.cm;
         if (!initScr) {
             text('\nCRITICAL READ ERROR: Invalid data.init block!');
             return;
