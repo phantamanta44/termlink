@@ -73,7 +73,7 @@ body {
     font-size: 24px;
 }
 
-#typing div::selection {
+#typing div::selection, #typing br::selection {
     background-color: #21e18c;
     color: #0e2e20;
     text-shadow: none;
